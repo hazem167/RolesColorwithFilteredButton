@@ -37,3 +37,14 @@ mat-chip.moderator {
   /* green */
   color: white;
 }
+.filter-bar {
+  margin: 16px 0;
+  display: flex;
+  gap: 8px;
+}
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}

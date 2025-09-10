@@ -1,4 +1,17 @@
-<div class="container">
+<div *ngIf="loading" class="loader-container">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+<div *ngIf="!loading" class="container">
+  <div class="filter-bar">
+  <mat-chip-listbox>
+    <mat-chip-option
+      *ngFor="let role of roles"
+      [selected]="selectedRole === role"
+      (click)="filterByRole(role)">
+      {{ role }}
+    </mat-chip-option>
+  </mat-chip-listbox>
+</div>
   <h2>Users</h2>
 
   <mat-form-field appearance="outline">

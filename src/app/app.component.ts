@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from './services/user.service';  // ✅ correct import
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatCard } from '@angular/material/card';
-import { MatChip } from '@angular/material/chips';
+import { MatChip, MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { NgClass, NgFor,NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-root',
   standalone:true,
-  imports:[MatFormField,MatLabel,MatCard,MatChip,NgFor,NgIf,FormsModule,NgForOf,MatInput,NgClass],
+  imports:[MatProgressSpinnerModule,MatChipOption,MatChipListbox,MatFormField,MatLabel,MatCard,MatChip,NgFor,NgIf,FormsModule,NgForOf,MatInput,NgClass],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -20,19 +20,31 @@ export class AppComponent implements OnInit {
   searchValue: string = '';
 
   constructor(private userService: UserService) {}
-
+  loading = true;
   ngOnInit() {
     this.userService.getUsers().subscribe(data => {
-      console.log('Loaded users:', data);
       this.users = data;
       this.filteredUsers = data;
+      this.loading = false;
     });
   }
 
   search() {
-    this.filteredUsers = this.users.filter(user =>
+   let filtered = this.users;
+
+  if (this.selectedRole !== 'All') {
+    filtered = filtered.filter(
+      user => user.role.toLowerCase() === this.selectedRole.toLowerCase()
+    );
+  }
+
+  if (this.searchValue.trim() !== '') {
+    filtered = filtered.filter(user =>
       user.email.toLowerCase().includes(this.searchValue.toLowerCase())
     );
+  }
+
+  this.filteredUsers = filtered;
   }
 
   getRoleColor(role: string): 'primary' | 'accent' | 'warn' {
@@ -47,4 +59,18 @@ export class AppComponent implements OnInit {
         return 'primary';
     }
   }
+roles: string[] = ['All', 'User', 'Moderator', 'Admin'];
+selectedRole = 'All';
+
+  filterByRole(role: string) {
+  this.selectedRole = role;
+
+  if (role === 'All') {
+    this.filteredUsers = this.users; // show all
+  } else {
+    this.filteredUsers = this.users.filter(
+      user => user.role.toLowerCase() === role.toLowerCase()
+    );
+  }
+}
 }
